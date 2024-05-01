@@ -108,7 +108,7 @@ async function submit(formData?: FormData, skip?: boolean) {
 
       // Add follow-up panel
       uiStream.append(
-        <Section title="Follow-up">
+        <Section title="进一步搜索">
           <FollowupPanel />
         </Section>
       )

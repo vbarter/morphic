@@ -82,11 +82,14 @@ export function ChatPanel() {
   }
 
   return (
+    
     <div
       className={
         'fixed bottom-8 left-0 right-0 top-10 mx-auto h-screen flex flex-col items-center justify-center'
       }
     >
+      <h1 className="text-lg font-semibold text-center mb-5">基于AI的问答搜索引擎</h1>
+      <div className='max-w-2xl w-full px-6'>
       <form onSubmit={handleSubmit} className="max-w-2xl w-full px-6">
         <div className="relative flex items-center w-full">
           <Input
@@ -95,7 +98,7 @@ export function ChatPanel() {
             name="input"
             placeholder="输入您的问题 ..."
             value={input}
-            className="pl-4 pr-10 h-12 rounded-full bg-muted"
+            className="pl-4 pr-10 h-12 bg-muted"
             onChange={e => {
               setInput(e.target.value)
               setShowEmptyScreen(e.target.value.length === 0)
@@ -120,6 +123,8 @@ export function ChatPanel() {
           className={cn(showEmptyScreen ? 'visible' : 'invisible')}
         />
       </form>
+      </div>
     </div>
+
   )
 }
