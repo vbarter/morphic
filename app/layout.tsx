@@ -55,7 +55,7 @@ export default function RootLayout({
         >
           <Header />
           <AI>{children}</AI>
-          <Footer />
+          {/* <Footer /> */}
         </ThemeProvider>
       </body>
     </html>
