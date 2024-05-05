@@ -4,7 +4,8 @@ RUN apk add --no-cache nodejs npm git
 
 RUN git clone --depth=1 https://github.com/vbarter/morphic.git /app && \
   cd /app && \
-  git checkout mysearch && git pull && \
+  git checkout mysearch && \
+  git pull && \
   rm -rf .git && \
   bun i && \
   bun next telemetry disable
