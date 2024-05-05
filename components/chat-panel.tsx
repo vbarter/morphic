@@ -112,6 +112,8 @@ export function ChatPanel({ messages }: ChatPanelProps) {
             type="submit"
             size={'icon'}
             variant={'ghost'}
+            data-umami-event="搜索"
+            data-umami-event-search={input}
             className="absolute right-2 top-1/2 transform -translate-y-1/2"
             disabled={input.length === 0}
           >

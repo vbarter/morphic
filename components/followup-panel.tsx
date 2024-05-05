@@ -51,6 +51,8 @@ export function FollowupPanel() {
         size={'icon'}
         disabled={input.length === 0}
         variant={'ghost'}
+        data-umami-event="进一步提问"
+        data-umami-event-followup={input}
         className="absolute right-1"
       >
         <ArrowRight size={20} />

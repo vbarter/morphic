@@ -35,7 +35,7 @@ export function History({ location, chats }: HistoryProps) {
         <SheetHeader>
           <SheetTitle className="flex items-center gap-1 text-sm font-normal mb-2">
             <HistoryIcon size={14} />
-            History
+            历史记录
           </SheetTitle>
         </SheetHeader>
         <div className="pb-6 overflow-y-auto h-full">
