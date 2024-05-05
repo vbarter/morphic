@@ -3,8 +3,9 @@ FROM oven/bun:1.1.3-alpine
 RUN apk add --no-cache nodejs npm git
 
 RUN git clone --depth=1 https://github.com/vbarter/morphic.git /app && \
-  rm -rf /app/.git && \
   cd /app && \
+  git checkout mysearch && git pull && \
+  rm -rf .git && \
   bun i && \
   bun next telemetry disable
 
