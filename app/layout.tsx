@@ -59,10 +59,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
       >
-        <Header/>
-        {children}
-        <Sidebar/>
-        {/*<Footer />*/}
+          <Header/>
+          {children}
+          <Sidebar/>
+          {/*<Footer />*/}
       </ThemeProvider>
       </body>
       </html>
