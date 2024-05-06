@@ -12,6 +12,7 @@ import { BotMessage } from '@/components/message'
 import Exa from 'exa-js'
 import { Card } from '@/components/ui/card'
 import { SearchSection } from '@/components/search-section'
+import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
 
 export async function researcher(
   uiStream: ReturnType<typeof createStreamableUI>,
@@ -24,6 +25,7 @@ export async function researcher(
     apiKey: process.env.OPENAI_API_KEY, // optional API key, default to env property OPENAI_API_KEY
     organization: '' // optional organization
   })
+
 
   const searchAPI: 'tavily' | 'exa' = 'tavily'
 
@@ -38,7 +40,8 @@ export async function researcher(
   let isFirstToolResponse = true
   const result = await experimental_streamText({
     model: openai.chat(process.env.OPENAI_API_MODEL || 'gpt-4-turbo'),
-    maxTokens: 2500,
+    temperature: 0.5,
+    maxTokens: 4500,
     // system: `As a professional search expert, you possess the ability to search for any information on the web.
     // For each user query, utilize the search results to their fullest potential to provide additional information and assistance in your response.
     // If there are any images relevant to your answer, be sure to include them as well.
