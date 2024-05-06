@@ -30,7 +30,7 @@ export function SearchSection({ result }: SearchSectionProps) {
               />
             </Section>
           )}
-          <Section title="相关链接">
+          <Section title="参考链接">
             <SearchResults results={searchResults.results} />
           </Section>
         </>

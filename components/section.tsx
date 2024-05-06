@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import {
   BookCheck,
-  Image,
+  Image, Link2,
   MessageCircleMore,
   Newspaper,
   Repeat2,
@@ -33,14 +33,14 @@ export const Section: React.FC<SectionProps> = ({
       // eslint-disable-next-line jsx-a11y/alt-text
       icon = <Image size={18} className="mr-2" />
       break
-    case 'Sources':
+    case '相关搜索':
       icon = <Newspaper size={18} className="mr-2" />
       break
     case '回答':
       icon = <BookCheck size={18} className="mr-2" />
       break
-    case '相关':
-      icon = <Repeat2 size={18} className="mr-2" />
+    case '参考链接':
+      icon = <Link2 size={18} className="mr-2" />
       break
     case '进一步搜索':
       icon = <MessageCircleMore size={18} className="mr-2" />
