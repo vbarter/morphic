@@ -174,6 +174,32 @@ async function tavilySearch(
   return data
 }
 
+async function DuckDuckGoSearch(
+    query: string,
+    maxResults: number = 10,
+    searchDepth: 'basic' | 'advanced' = 'basic'
+): Promise<any> {
+
+  // 编码查询词以适用于URL
+  const encodedQuery = encodeURIComponent(query);
+
+  const url = `http://duckduckgo.sosuo.me/search?q=${encodedQuery}&max_results=${maxResults}`;
+
+  console.log(url)
+  const response = await fetch(url, {
+    method: 'GET',
+  })
+
+  console.log(response.text())
+
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`)
+  }
+
+  const data = await response.json()
+  return data
+}
+
 async function exaSearch(query: string, maxResults: number = 10): Promise<any> {
   const apiKey = process.env.EXA_API_KEY
   const exa = new Exa(apiKey)
