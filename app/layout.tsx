@@ -16,7 +16,7 @@ const fontSans = FontSans({
 
 const title = '搜米'
 const description =
-  'A fully open-source AI-powered answer engine with a generative UI.'
+  '基于AI的搜索引擎'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.sosuo.me'),
