@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     title,
     description,
     card: 'summary_large_image',
-    creator: '@miiura'
+    creator: '@vbarter'
   }
 }
 
@@ -48,6 +48,7 @@ export default function RootLayout({
 }>) {
   return (
       <html lang="en" suppressHydrationWarning>
+      {/*监控统计*/}
       <head>
         <script defer src="https://analytics.us.umami.is/script.js"
                 data-website-id="e9daaa83-b36c-4b49-80b6-d728a7d64a69"></script>
@@ -61,7 +62,7 @@ export default function RootLayout({
       >
         <Header/>
         {children}
-        <Sidebar/>
+        {/*<Sidebar/>*/}
         {/*<Footer />*/}
       </ThemeProvider>
       </body>
