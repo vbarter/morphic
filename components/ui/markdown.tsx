@@ -1,7 +1,9 @@
-import React, { FC, memo, CSSProperties } from 'react';
+import React, {FC, memo, CSSProperties, ReactNode} from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import {darcula} from 'react-syntax-highlighter/dist/esm/styles/prism';
+import {Options} from "arg";
+import {Root} from "hast";
 
 // 这里定义一个自定义的 code 样式对象，用来覆盖默认的 darcula 主题样式
 const customCodeStyle = {
@@ -19,18 +21,20 @@ const customCodeStyle = {
 };
 
 interface MemoizedReactMarkdownProps {
-    children: string;
-    className?: string;
+    rehypePlugins?: [any, any][],
+    remarkPlugins?: any[],
+    className?: string,
+    children: any,
 }
 
 export const MemoizedReactMarkdown: FC<MemoizedReactMarkdownProps> = memo(
-    ({ children, className, ...props }) => (
+    ({className, rehypePlugins, remarkPlugins,children,  ...props}) => (
         <ReactMarkdown
             children={children}
             className={className}
             {...props}
             components={{
-                code({ node, className, children }) {
+                code({node, className, children}) {
                     const match = /language-(\w+)/.exec(className || '');
                     return match ? (
                         <SyntaxHighlighter
