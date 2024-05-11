@@ -21,7 +21,7 @@ export function SearchSection({ result }: SearchSectionProps) {
       {!pending && data ? (
         <>
           {
-            !searchResults.stickers && (
+            searchResults.stickers === undefined && (
                   <Section size="sm" className="pt-2 pb-0">
                     <ToolBadge tool="search">{`${searchResults.query}`}</ToolBadge>
                   </Section>

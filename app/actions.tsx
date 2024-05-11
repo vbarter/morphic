@@ -176,7 +176,20 @@ async function submit(formData?: FormData, skip?: boolean) {
 
     if (!errorOccurred) {
       // Generate related queries
-      const relatedQueries = await querySuggestor(uiStream, messages)
+      let isSticker= false
+      messages.forEach(message => {
+        if (message.role === 'tool' && message.content[0].toolName === 'stickers') {
+          isSticker = true
+        }
+      })
+
+      console.log("isSticker", isSticker)
+      let relatedQueries = {}
+      if (!isSticker) {
+        relatedQueries = await querySuggestor(uiStream, messages)
+      } else {
+        relatedQueries = {}
+      }
       // Add follow-up panel
       uiStream.append(
         <Section title="进一步搜索">
@@ -339,14 +352,26 @@ export const getUIStateFromAIState = (aiState: Chat) => {
               }
             case 'related':
               const relatedQueries = createStreamableValue()
-              relatedQueries.done(JSON.parse(content))
-              return {
-                id,
-                component: (
-                  <Section title="相关搜索" separator={true}>
-                    <SearchRelated relatedQueries={relatedQueries.value} />
-                  </Section>
-                )
+              console.log("related", content)
+              const related = JSON.parse(content)
+              if (related.related) {
+                relatedQueries.done(related.related)
+                return {
+                  id,
+                  component: (
+                      <Section title="相关搜索" separator={true}>
+                        <SearchRelated relatedQueries={relatedQueries.value} />
+                      </Section>
+                  )
+                }
+              } else {
+                return {
+                  id,
+                  component: (
+                      <>
+                      </>
+                  )
+                }
               }
             case 'followup':
               return {

@@ -226,11 +226,14 @@ All output is in Chinese。
           }
           // Append the search section
           const streamResults = createStreamableValue<string>()
-          uiStream.append(<SearchSection result={streamResults.value} />)
-          const stickers = [{
-            src: output,
-            alt: query
-          }]
+          // uiStream.append(<SearchSection result={streamResults.value} />)
+          const stickers = {
+            query: query,
+            stickers: [{
+                src: output,
+                alt: query
+            }]
+          }
           const json_stickers = JSON.stringify(stickers)
           streamResults.done(json_stickers)
           return streamResults
