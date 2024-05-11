@@ -20,7 +20,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
   const { submit } = useActions()
   const [isButtonPressed, setIsButtonPressed] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
-  const [showEmptyScreen, setShowEmptyScreen] = useState(false)
+  const [showEmptyScreen, setShowEmptyScreen] = useState(true)
   const router = useRouter()
   // Focus on input when button is pressed
   useEffect(() => {
@@ -101,12 +101,12 @@ export function ChatPanel({ messages }: ChatPanelProps) {
             placeholder="输入您的问题 ..."
             value={input}
             className="pl-4 pr-10 h-12 bg-muted"
-            onChange={e => {
-              setInput(e.target.value)
-              setShowEmptyScreen(e.target.value.length === 0)
-            }}
-            onFocus={() => setShowEmptyScreen(true)}
-            onBlur={() => setShowEmptyScreen(false)}
+            // onChange={e => {
+            //   setInput(e.target.value)
+            //   setShowEmptyScreen(e.target.value.length === 0)
+            // }}
+            // onFocus={() => setShowEmptyScreen(true)}
+            // onBlur={() => setShowEmptyScreen(false)}
           />
           <Button
             type="submit"
