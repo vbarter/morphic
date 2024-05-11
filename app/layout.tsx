@@ -50,8 +50,8 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
       {/*监控统计*/}
       <head>
-          {/*<script defer src="https://smami.zeabur.app/script.js"*/}
-          {/*        data-website-id="a7593bb2-b8cb-460b-b652-e6cc430cfdc9"></script>*/}
+          <script defer src="https://smami.zeabur.app/script.js"
+                  data-website-id="a7593bb2-b8cb-460b-b652-e6cc430cfdc9"></script>
       </head>
       <body className={cn('font-sans antialiased', fontSans.variable)}>
       <ThemeProvider
