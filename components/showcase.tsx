@@ -20,7 +20,7 @@ type SectionProps = {
   separator?: boolean
 }
 
-export const Section: React.FC<SectionProps> = ({
+export const Showcase: React.FC<SectionProps> = ({
   children,
   className,
   size = 'md',

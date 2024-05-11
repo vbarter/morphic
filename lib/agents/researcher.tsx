@@ -12,7 +12,7 @@ import { BotMessage } from '@/components/message'
 import Exa from 'exa-js'
 import { Card } from '@/components/ui/card'
 import { SearchSection } from '@/components/search-section'
-import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
+import Replicate from "replicate";
 
 export async function researcher(
   uiStream: ReturnType<typeof createStreamableUI>,
@@ -196,14 +196,49 @@ All output is in Chinese。
             )
             return searchResult
           }
-
           streamResults.done(JSON.stringify(searchResult))
 
           return searchResult
         }
+      },
+      stickers: {
+        description: 'Call this tool to draw stickers',
+        parameters: searchSchema,
+        execute: async ({
+                          query
+                        }: {
+          query: string
+        }) => {
+          // If this is the first tool response, remove spinner
+          const replicate = new Replicate()
+
+          const input = {
+            output_quality: 50,
+            prompt: query,
+            number_of_images: 1,
+          };
+
+          const output = await replicate.run("fofr/sticker-maker:4acb778eb059772225ec213948f0660867b2e03f277448f18cf1800b96a65a1a", { input });
+          // If this is the first tool response, remove spinner
+          if (isFirstToolResponse) {
+            isFirstToolResponse = false
+            uiStream.update(null)
+          }
+          // Append the search section
+          const streamResults = createStreamableValue<string>()
+          uiStream.append(<SearchSection result={streamResults.value} />)
+          const stickers = [{
+            src: output,
+            alt: query
+          }]
+          const json_stickers = JSON.stringify(stickers)
+          streamResults.done(json_stickers)
+          return streamResults
+        }
       }
     }
   })
+
 
   const toolCalls: ToolCallPart[] = []
   const toolResponses: ToolResultPart[] = []

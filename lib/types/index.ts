@@ -2,6 +2,12 @@ export type SearchResults = {
   images: string[]
   results: SearchResultItem[]
   query: string
+  stickers: Sticker[]
+}
+
+export type Sticker = {
+    src: string
+    alt: string
 }
 
 export type SearchResultItem = {

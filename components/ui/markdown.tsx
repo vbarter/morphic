@@ -45,9 +45,16 @@ export const MemoizedReactMarkdown: FC<MemoizedReactMarkdownProps> = memo(
                             {...props}
                         />
                     ) : (
-                        <code className={className} {...props}>
-                            {children}
-                        </code>
+                        // <code className={className} {...props}>
+                        //     {children}
+                        // </code>
+                    <SyntaxHighlighter
+                        style={customCodeStyle}// You may need to assert the type if TypeScript can't infer it correctly
+                        language={"shell"}
+                        PreTag="div"
+                        children={String(children).replace(/\n$/, '')}
+                        {...props}
+                    />
                     );
                 },
             }}
