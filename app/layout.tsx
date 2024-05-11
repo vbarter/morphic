@@ -50,8 +50,8 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
       {/*监控统计*/}
       <head>
-        <script defer src="https://analytics.us.umami.is/script.js"
-                data-website-id="e9daaa83-b36c-4b49-80b6-d728a7d64a69"></script>
+          <script defer src="https://smami.zeabur.app/script.js"
+                  data-website-id="a7593bb2-b8cb-460b-b652-e6cc430cfdc9"></script>
       </head>
       <body className={cn('font-sans antialiased', fontSans.variable)}>
       <ThemeProvider

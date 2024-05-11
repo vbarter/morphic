@@ -352,7 +352,6 @@ export const getUIStateFromAIState = (aiState: Chat) => {
               }
             case 'related':
               const relatedQueries = createStreamableValue()
-              console.log("related", content)
               const related = JSON.parse(content)
               if (related.related) {
                 relatedQueries.done(related.related)
