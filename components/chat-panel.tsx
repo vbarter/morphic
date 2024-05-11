@@ -101,10 +101,10 @@ export function ChatPanel({ messages }: ChatPanelProps) {
             placeholder="输入您的问题 ..."
             value={input}
             className="pl-4 pr-10 h-12 bg-muted"
-            // onChange={e => {
-            //   setInput(e.target.value)
-            //   setShowEmptyScreen(e.target.value.length === 0)
-            // }}
+            onChange={e => {
+              setInput(e.target.value)
+              // setShowEmptyScreen(e.target.value.length === 0)
+            }}
             // onFocus={() => setShowEmptyScreen(true)}
             // onBlur={() => setShowEmptyScreen(false)}
           />
