@@ -252,7 +252,7 @@ All output is in Chinese。
         }) => {
           // If this is the first tool response, remove spinner
           const streamResults = createStreamableValue<string>()
-          const new_query: string = JSON.parse(messages[0].content as string).input
+          const new_query: string = JSON.parse(messages[messages.length - 1].content as string).input
           console.log(new_query)
           const headers = {
             Authorization: `Bearer ${process.env.COZE_PERSONAL_ACCESS_TOKEN}`,
