@@ -199,7 +199,7 @@ async function submit(formData?: FormData, skip?: boolean) {
 
       // Add the answer, related queries, and follow-up panel to the state
       // Wait for 0.5 second before adding the answer to the state
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise(resolve => setTimeout(resolve, 1500))
 
       aiState.done({
         ...aiState.get(),
