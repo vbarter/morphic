@@ -3,7 +3,7 @@ import {
   CoreMessage,
   ToolCallPart,
   ToolResultPart,
-  streamText as nonexperimental_streamText
+  streamText as nonexperimental_streamText, nanoid
 } from 'ai'
 import {searchSchema} from '@/lib/schema/search'
 import { Section } from '@/components/section'
@@ -257,7 +257,7 @@ All output is in Chinese。
           const streamResults = createStreamableValue<string>()
           const new_query: string = JSON.parse(messages[0].content as string).input
           const headers = {
-            Authorization: `Bearer pat_TbGGuznwsz154BvOtPYunDMXfbnnsdIioeVUvN4GW18AkYb65A2ArAYTB0vwzzVY`,
+            Authorization: `Bearer ${process.env.COZE_PERSONAL_ACCESS_TOKEN}`,
             'Content-Type': 'application/json',
             'Accept': '*/*',
             'Host': 'api.coze.com',
@@ -268,9 +268,9 @@ All output is in Chinese。
             method: 'POST',
             headers: headers,
             body: JSON.stringify({
-              conversation_id: "1",
+              conversation_id: nanoid(),
               bot_id: "7363570359524048902",
-              user: "1",
+              user: nanoid(),
               query: new_query,
               stream: false,
             })
