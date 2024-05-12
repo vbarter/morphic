@@ -1,5 +1,5 @@
 import { createStreamableUI, createStreamableValue } from 'ai/rsc'
-import { ExperimentalMessage, experimental_streamObject } from 'ai'
+import { CoreMessage, experimental_streamObject } from 'ai'
 import { PartialRelated, relatedSchema } from '@/lib/schema/related'
 import { Section } from '@/components/section'
 import SearchRelated from '@/components/search-related'
@@ -7,7 +7,7 @@ import { OpenAI } from '@ai-sdk/openai'
 
 export async function querySuggestor(
   uiStream: ReturnType<typeof createStreamableUI>,
-  messages: ExperimentalMessage[]
+  messages: CoreMessage[]
 ) {
   const openai = new OpenAI({
     baseUrl: process.env.OPENAI_API_BASE, // optional base URL for proxies etc.

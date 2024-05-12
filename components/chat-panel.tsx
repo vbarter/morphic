@@ -1,7 +1,9 @@
+'use client'
+
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { AI, UIState } from '@/app/actions'
-import { useUIState, useActions } from 'ai/rsc'
+import {useUIState, useActions, useAIState} from 'ai/rsc'
 import { cn } from '@/lib/utils'
 import { UserMessage } from './user-message'
 import { Input } from './ui/input'
@@ -16,7 +18,8 @@ interface ChatPanelProps {
 
 export function ChatPanel({ messages }: ChatPanelProps) {
   const [input, setInput] = useState('')
-  const [, setMessages] = useUIState<typeof AI>()
+  const [_, setMessages] = useUIState<typeof AI>()
+  const [aiMessages, setAiMessages] = useAIState<typeof AI>()
   const { submit } = useActions()
   const [isButtonPressed, setIsButtonPressed] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -44,6 +47,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
       ...currentMessages,
       {
         id: nanoid(),
+        isGenerating: false,
         component: <UserMessage message={input} />
       }
     ])
@@ -56,7 +60,9 @@ export function ChatPanel({ messages }: ChatPanelProps) {
 
   // Clear messages
   const handleClear = () => {
-    router.push('/')
+    setIsButtonPressed(true)
+    setMessages([])
+    // setAiMessages([])
   }
 
   useEffect(() => {

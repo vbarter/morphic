@@ -6,7 +6,7 @@ import {
   getAIState,
   getMutableAIState
 } from 'ai/rsc'
-import { ExperimentalMessage, nanoid, ToolResultPart } from 'ai'
+import { CoreMessage, nanoid, ToolResultPart } from 'ai'
 import { Spinner } from '@/components/ui/spinner'
 import { Section } from '@/components/section'
 import { FollowupPanel } from '@/components/followup-panel'
@@ -20,6 +20,7 @@ import { BotMessage } from '@/components/message'
 import { SearchSection } from '@/components/search-section'
 import SearchRelated from '@/components/search-related'
 import { CopilotDisplay } from '@/components/copilot-display'
+import React from "react";
 
 async function submit(formData?: FormData, skip?: boolean) {
   'use server'
@@ -29,7 +30,7 @@ async function submit(formData?: FormData, skip?: boolean) {
   const isGenerating = createStreamableValue(true)
   const isCollapsed = createStreamableValue(false)
   // Get the messages from the state, filter out the tool messages
-  const messages: ExperimentalMessage[] = [
+  const messages: CoreMessage[] = [
     ...(aiState.get().messages as any[])
   ].filter(
     message =>
@@ -117,7 +118,7 @@ async function submit(formData?: FormData, skip?: boolean) {
     let toolOutputs: ToolResultPart[] = []
     let errorOccurred = false
     const streamText = createStreamableValue<string>()
-    uiStream.update(<Spinner />)
+    uiStream.update(<Spinner/>)
 
     // If useSpecificAPI is enabled, only function calls will be made
     // If not using a tool, this model generates the answer
@@ -168,7 +169,7 @@ async function submit(formData?: FormData, skip?: boolean) {
               type: 'tool'
             }
           : msg
-      ) as ExperimentalMessage[]
+      ) as CoreMessage[]
       answer = await writer(uiStream, streamText, modifiedMessages)
     } else {
       streamText.done()
@@ -199,7 +200,10 @@ async function submit(formData?: FormData, skip?: boolean) {
 
       // Add the answer, related queries, and follow-up panel to the state
       // Wait for 0.5 second before adding the answer to the state
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      await new Promise(resolve => setTimeout(resolve, 2500))
+
+      isGenerating.done(false)
+      uiStream.done()
 
       aiState.done({
         ...aiState.get(),
@@ -227,8 +231,6 @@ async function submit(formData?: FormData, skip?: boolean) {
       })
     }
 
-    isGenerating.done(false)
-    uiStream.done()
   }
 
   processEvents()
@@ -244,6 +246,7 @@ async function submit(formData?: FormData, skip?: boolean) {
 export type AIState = {
   messages: AIMessage[]
   chatId: string
+  isSharePage?: boolean
 }
 
 export type UIState = {
@@ -267,7 +270,7 @@ export const AI = createAI<AIState, UIState>({
   },
   initialUIState,
   initialAIState,
-  unstable_onGetUIState: async () => {
+  onGetUIState: async () => {
     'use server'
 
     const aiState = getAIState()
@@ -278,7 +281,7 @@ export const AI = createAI<AIState, UIState>({
       return
     }
   },
-  unstable_onSetAIState: async ({ state, done }) => {
+  onSetAIState: async ({ state, done }) => {
     'use server'
 
     const { chatId, messages } = state
@@ -314,8 +317,10 @@ export const AI = createAI<AIState, UIState>({
 })
 
 export const getUIStateFromAIState = (aiState: Chat) => {
+  const chatId = aiState.chatId
+  const isSharePage = aiState.isSharePage
   return aiState.messages
-    .map(message => {
+    .map((message, index) => {
       const { role, content, id, type, name } = message
 
       if (!type || type === 'end') return null
@@ -329,7 +334,9 @@ export const getUIStateFromAIState = (aiState: Chat) => {
               const value = type === 'input' ? json.input : json.related_query
               return {
                 id,
-                component: <UserMessage message={value} />
+                component: <UserMessage message={value}
+                                        chatId={chatId}
+                                        showShare={index === 0 && !isSharePage} />
               }
             case 'inquiry':
               return {
@@ -353,8 +360,18 @@ export const getUIStateFromAIState = (aiState: Chat) => {
             case 'related':
               const relatedQueries = createStreamableValue()
               const related = JSON.parse(content)
-              if (related.related) {
-                relatedQueries.done(related.related)
+              if (related.items && related.items.length > 0) {
+                const new_related  = {
+                  items: related.items.map((item: any) => {
+                    // 如果item已经是QueryItem格式，直接返回
+                    if (typeof item === 'object' && item.query) {
+                      return item;
+                    }
+                    // 否则，转换为QueryItem格式
+                    return { query: item as string };
+                  })
+                }
+                relatedQueries.done(new_related)
                 return {
                   id,
                   component: (
@@ -364,12 +381,10 @@ export const getUIStateFromAIState = (aiState: Chat) => {
                   )
                 }
               } else {
+                relatedQueries.done()
                 return {
                   id,
-                  component: (
-                      <>
-                      </>
-                  )
+                  component: null
                 }
               }
             case 'followup':

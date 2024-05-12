@@ -1,15 +1,18 @@
+'use client'
+
 import { StreamableValue, useUIState } from 'ai/rsc'
 import type { AI, UIState } from '@/app/actions'
 import { CollapsibleMessage } from './collapsible-message'
 
 interface ChatMessagesProps {
-  messages: UIState
+    messages: UIState
 }
 
 export function ChatMessages({ messages }: ChatMessagesProps) {
-  if (!messages.length) {
-    return null
-  }
+
+    if (!messages.length) {
+        return null
+    }
 
   // Group messages based on ID, and if there are multiple messages with the same ID, combine them into one message
   const groupedMessages = messages.reduce(

@@ -13,6 +13,7 @@ import Exa from 'exa-js'
 import { Card } from '@/components/ui/card'
 import { SearchSection } from '@/components/search-section'
 import Replicate from "replicate";
+import {Spinner} from "@/components/ui/spinner";
 
 export async function researcher(
   uiStream: ReturnType<typeof createStreamableUI>,
@@ -174,13 +175,9 @@ All output is in Chinese。
           max_results: number
           search_depth: 'basic' | 'advanced'
         }) => {
-          // If this is the first tool response, remove spinner
-          if (isFirstToolResponse) {
-            isFirstToolResponse = false
-            uiStream.update(null)
-          }
           // Append the search section
           const streamResults = createStreamableValue<string>()
+          uiStream.update(<></>)
           uiStream.append(<SearchSection result={streamResults.value} />)
 
           // Tavily API requires a minimum of 5 characters in the query
@@ -228,11 +225,7 @@ All output is in Chinese。
           };
 
           const output = await replicate.run("fofr/sticker-maker:4acb778eb059772225ec213948f0660867b2e03f277448f18cf1800b96a65a1a", { input });
-          // If this is the first tool response, remove spinner
-          if (isFirstToolResponse) {
-            isFirstToolResponse = false
-            uiStream.update(null)
-          }
+
           // Append the search section
           const streamResults = createStreamableValue<string>()
           const stickers = {
@@ -242,7 +235,9 @@ All output is in Chinese。
                 alt: query
             }]
           }
+
           const json_stickers = JSON.stringify(stickers)
+          uiStream.update(<></>)
           streamResults.done(json_stickers)
           return streamResults
         }
