@@ -202,7 +202,7 @@ async function submit(formData?: FormData, skip?: boolean) {
       // Wait for 0.5 second before adding the answer to the state
       await new Promise(resolve => setTimeout(resolve, 2500))
 
-      isGenerating.done(false)
+      // isGenerating.done(false)
       uiStream.done()
 
       aiState.done({

@@ -24,8 +24,6 @@ export async function get_stocker_info(query:string,
         stream: stream
     };
 
-    console.log(data);
-
     try {
         const response = await axios.post(url, data, { headers });
         console.log(response.data);
