@@ -257,7 +257,7 @@ All output is in Chinese。
           const streamResults = createStreamableValue<string>()
           const new_query: string = JSON.parse(messages[0].content as string).input
           const headers = {
-            Authorization: `Bearer ${process.env.COZE_PERSONAL_ACCESS_TOKEN}`,
+            Authorization: `Bearer pat_TbGGuznwsz154BvOtPYunDMXfbnnsdIioeVUvN4GW18AkYb65A2ArAYTB0vwzzVY`,
             'Content-Type': 'application/json',
             'Accept': '*/*',
             'Host': 'api.coze.com',
