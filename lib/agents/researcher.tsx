@@ -1,11 +1,11 @@
 import { createStreamableUI, createStreamableValue } from 'ai/rsc'
 import {
-  ExperimentalMessage,
+  CoreMessage,
   ToolCallPart,
   ToolResultPart,
-  experimental_streamText
+  streamText as nonexperimental_streamText
 } from 'ai'
-import { searchSchema } from '@/lib/schema/search'
+import {searchSchema} from '@/lib/schema/search'
 import { Section } from '@/components/section'
 import { OpenAI } from '@ai-sdk/openai'
 import { BotMessage } from '@/components/message'
@@ -15,11 +15,12 @@ import { SearchSection } from '@/components/search-section'
 import Replicate from "replicate";
 import {Spinner} from "@/components/ui/spinner";
 import {get_stocker_info} from "@/lib/utils/http_utils";
+import {z} from "zod";
 
 export async function researcher(
   uiStream: ReturnType<typeof createStreamableUI>,
   streamText: ReturnType<typeof createStreamableValue<string>>,
-  messages: ExperimentalMessage[],
+  messages: CoreMessage[],
   useSpecificModel?: boolean
 ) {
   const openai = new OpenAI({
@@ -40,7 +41,7 @@ export async function researcher(
   )
 
   let isFirstToolResponse = true
-  const result = await experimental_streamText({
+  const result = await nonexperimental_streamText({
     model: openai.chat(process.env.OPENAI_API_MODEL || 'gpt-4-turbo'),
     temperature: 0.5,
     maxTokens: 4500,
@@ -55,7 +56,7 @@ export async function researcher(
 You are SoSuoMe, a helpful search assistant trained by SoSuoMe AI. All output is in Chinese。
 
 When the user needs to draw something, please return the keyword in English and call the sticker tool to draw the sticker.
-If a user wants to know stock-related information, he should first call the tool stocker. The query parameter of the tool directly uses the user's input.
+If a user wants to know stock-related information, the tool stocker should be called first. use "USER_INPUT" to provide the stock code.
 
 # General Instructions
 
@@ -253,11 +254,10 @@ All output is in Chinese。
           query: string
         }) => {
           // If this is the first tool response, remove spinner
-          console.log("stocker", query)
           const streamResults = createStreamableValue<string>()
-
+          const new_query: string = JSON.parse(messages[0].content as string).input
           const headers = {
-            Authorization: `Bearer pat_gR1tZxWLrVy2J0ZhnA6lf2SK3gnrKdZtcRXhqLy8gqshUfdWAEWhmEk6YSw7OMi5`,
+            Authorization: `Bearer ${process.env.COZE_PERSONAL_ACCESS_TOKEN}`,
             'Content-Type': 'application/json',
             'Accept': '*/*',
             'Host': 'api.coze.com',
@@ -271,7 +271,7 @@ All output is in Chinese。
               conversation_id: "1",
               bot_id: "7363570359524048902",
               user: "1",
-              query: query,
+              query: new_query,
               stream: false,
             })
           })
