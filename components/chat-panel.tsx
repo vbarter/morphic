@@ -75,7 +75,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
           onClick={() => handleClear()}
         >
           <span className="text-sm mr-2 group-hover:block hidden animate-in fade-in duration-300">
-            New
+            新搜索
           </span>
           <Plus size={18} className="group-hover:rotate-90 transition-all" />
         </Button>
