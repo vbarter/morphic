@@ -30,6 +30,9 @@ export function ChatPanel({ messages }: ChatPanelProps) {
 
   const { handleClick, text, isRecording } = useRecordVoice();
 
+  // 麦克风状态
+  const [isMicActive, setMicIsActive] = useState(false);
+
   const router = useRouter()
 
 
@@ -82,7 +85,23 @@ export function ChatPanel({ messages }: ChatPanelProps) {
     }
   }, [text]);
 
-  const handleMicClick = () => handleClick(input2Ref);
+  const handleMicClick = () => {
+    const textarea = document.getElementById('input') as HTMLTextAreaElement;
+
+    if (isMicActive) {
+      textarea.disabled = false
+      setInput("输入您的问题 ...")
+
+      console.log("mic is active")
+      setMicIsActive(false);
+    } else {
+      textarea.disabled = true
+      setInput("正在语音输入 ...")
+      console.log("mic is inactive")
+      setMicIsActive(true);
+    }
+    handleClick(input2Ref);
+  }
 
   // If there are messages and the new button has not been pressed, display the new Button
   if (messages.length > 0 && !isButtonPressed) {
@@ -113,12 +132,12 @@ export function ChatPanel({ messages }: ChatPanelProps) {
         <h1 className="text-lg font-semibold text-center mb-5">基于AI的问答搜索引擎</h1>
 
 
-        <div className='grid max-w-2xl w-full px-6'>
+        <div className='grid max-w-2xl w-full px-6 space-y-4'>
           <div className="grid-cols-1">
             <form onSubmit={handleSubmit} className="max-w-2xl w-full px-6 ">
               <div className="relative flex items-center w-full">
                 <div className="flex w-full items-center">
-                  <Textarea
+                  <Textarea id={'input'}
                       ref={inputRef}
                       name="input"
                       rows={1}
@@ -146,7 +165,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
                       onBlur={() => setShowEmptyScreen(false)}
                   />
                   {isRecording && (
-                      <div className="absolute right-1/2  h-4 w-4 animate-pulse rounded-full bg-red-400" />
+                      <div className="absolute right-1/2  h-4 w-4 animate-pulse rounded-full bg-red-400"/>
                   )}
                   <Button
                       type="submit"
@@ -159,12 +178,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
                   >
                     <ArrowRight id="arrow" size={20}/>
                   </Button>
-                  <button onClick={(e) => {
-                    e.preventDefault(); // 阻止表单默认的提交行为
-                    handleMicClick();   // 执行你的handleMicClick函数
-                  }} className="px-1 mr-0">
-                    <Mic size={20}/>
-                  </button>
+
                 </div>
 
               </div>
@@ -174,8 +188,19 @@ export function ChatPanel({ messages }: ChatPanelProps) {
                   }}
                   className={cn(showEmptyScreen ? 'visible' : 'invisible')}
               />
+
+              <div id="mic" className="mi flex justify-center mt-16">
+                <button onClick={(e) => {
+                  e.preventDefault(); // 阻止表单默认的提交行为
+                  handleMicClick();   // 执行你的handleMicClick函数
+                }} className={`px-1 mr-0 w-full flex justify-center ${isMicActive ? 'animate-pulse' : ''}`}>
+                  <Mic size={60}/>
+                </button>
+              </div>
             </form>
           </div>
+
+
         </div>
 
         {/*<div className='grid max-w-2xl w-full px-6'>*/}
