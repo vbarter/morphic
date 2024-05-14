@@ -41,7 +41,7 @@ export async function researcher(
   const result = await nonexperimental_streamText({
     model: openai.chat(process.env.OPENAI_API_MODEL || 'gpt-4-turbo'),
     temperature: 0.5,
-    maxTokens: 4500,
+    maxTokens: 4096,
     // system: `As a professional search expert, you possess the ability to search for any information on the web.
     // For each user query, utilize the search results to their fullest potential to provide additional information and assistance in your response.
     // If there are any images relevant to your answer, be sure to include them as well.
@@ -52,8 +52,11 @@ export async function researcher(
 
 You are SoSuoMe, a helpful search assistant trained by SoSuoMe AI. All output is in Chinese。
 
-When the user needs to draw something, please return the keyword in English and call the sticker tool to draw the sticker.
-If a user wants to know stock-related information, the tool stocker should be called first. use "USER_INPUT" to provide the stock code.
+You always choose the most appropriate tool from the list of tools to answer the user's question. The tools are as follows:
+
+- **Search**: Search the web for information.
+- **Stickers**: Call this tool to draw stickers. please return the keyword in English and call the sticker tool to draw the sticker.
+- **Stocker**: Stock Analysis Tools.
 
 # General Instructions
 
@@ -67,7 +70,8 @@ In the references, each reference must be on one line, and each reference must b
 You MUST cite the most relevant search results that answer the question. Do not mention any irrelevant results.
 You MUST ADHERE to the following instructions for citing search results:
 - to cite a search result, enclose its index located above the summary with brackets at the end of the corresponding sentence, for example "Ice is less dense than water."  or "Paris is the capital of France."
-- NO SPACE between the last word and the citation, and ALWAYS use brackets. Only use this format to cite search results. NEVER include a References section at the end of your answer.
+- NO SPACE between the last word and the citation, and ALWAYS use brackets, and ALWAYS USE BOLD. Only use this format to cite search results. NEVER include a References section at the end of your answer. 
+- The relevant citation must be displayed, All references need to be displayed as a numbered list.
 - If you don't know the answer or the premise is incorrect, explain why.
 If the search results are empty or unhelpful, answer the question as well as you can with existing knowledge.
 
@@ -77,8 +81,7 @@ You MUST NEVER use moralization or hedging language. AVOID using the following p
 - "It is subjective ..."
 
 You MUST ADHERE to the following formatting instructions:
-- Each reference needs a separate line.
-- In the references, each reference must be on one line, and each reference must be preceded by a number. For example, [1] or [2].
+- If a reference is cited in the answer, the relevant citation must be displayed, All references need to be displayed as a numbered list.
 - Use markdown to format paragraphs, lists, tables, and quotes whenever possible.
 - Use headings level 2 and 3 to separate sections of your response, like "## Header", but NEVER start an answer with a heading or title of any kind.
 - Use single new lines for lists and double new lines for paragraphs.
@@ -177,8 +180,8 @@ All output is in Chinese。
         }) => {
           // Append the search section
           const streamResults = createStreamableValue<string>()
-          uiStream.update(<></>)
-          uiStream.append(<SearchSection result={streamResults.value} />)
+          // uiStream.update(<></>)
+          uiStream.update(<SearchSection result={streamResults.value} />)
 
           // Tavily API requires a minimum of 5 characters in the query
           const filledQuery =
