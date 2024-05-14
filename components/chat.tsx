@@ -22,12 +22,13 @@ export function Chat({ id }: ChatProps) {
         }
     }, [id, path, messages])
 
-    // useEffect(() => {
-    //     if (aiState.messages[aiState.messages.length - 1]?.type === 'followup') {
-    //         // Refresh the page to chat history updates
-    //         router.refresh()
-    //     }
-    // }, [aiState, router])
+    // 执行完成后当前页面刷新一次
+    useEffect(() => {
+        if (aiState.messages[aiState.messages.length - 1]?.type === 'followup') {
+            // Refresh the page to chat history updates
+            router.refresh()
+        }
+    }, [aiState, router])
 
     return (
         <div className="px-8 sm:px-12 pt-12 md:pt-14 pb-14 md:pb-24 max-w-3xl mx-auto flex flex-col space-y-3 md:space-y-4">

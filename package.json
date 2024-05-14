@@ -1,10 +1,10 @@
 {
-  "name": "mophic",
+  "name": "somi",
   "version": "0.1.0",
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -40,6 +40,7 @@
     "react-icons": "^5.0.1",
     "react-markdown": "^9.0.1",
     "react-syntax-highlighter": "^15.5.0",
+    "react-textarea-autosize": "^8.5.3",
     "rehype-external-links": "^3.0.0",
     "remark-gfm": "^4.0.0",
     "replicate": "^0.29.4",

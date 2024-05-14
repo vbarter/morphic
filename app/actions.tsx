@@ -118,7 +118,7 @@ async function submit(formData?: FormData, skip?: boolean) {
     let toolOutputs: ToolResultPart[] = []
     let errorOccurred = false
     const streamText = createStreamableValue<string>()
-    uiStream.update(<Spinner/>)
+    uiStream.update(<Spinner />)
 
     // If useSpecificAPI is enabled, only function calls will be made
     // If not using a tool, this model generates the answer
@@ -200,8 +200,7 @@ async function submit(formData?: FormData, skip?: boolean) {
 
       // Add the answer, related queries, and follow-up panel to the state
       // Wait for 0.5 second before adding the answer to the state
-      await new Promise(resolve => setTimeout(resolve, 2500))
-
+      await new Promise(resolve => setTimeout(resolve, 500))
 
 
       aiState.done({
@@ -229,10 +228,10 @@ async function submit(formData?: FormData, skip?: boolean) {
         ]
       })
 
-      isGenerating.done(false)
-      uiStream.done()
-
     }
+
+    isGenerating.done(false)
+    uiStream.done()
 
   }
 
@@ -287,6 +286,11 @@ export const AI = createAI<AIState, UIState>({
   onSetAIState: async ({ state, done }) => {
     'use server'
 
+    // Check if there is any message of type 'answer' in the state messages
+    if (!state.messages.some(e => e.type === 'answer')) {
+      return
+    }
+
     const { chatId, messages } = state
     const createdAt = new Date()
     const userId = 'anonymous'
@@ -322,6 +326,7 @@ export const AI = createAI<AIState, UIState>({
 export const getUIStateFromAIState = (aiState: Chat) => {
   const chatId = aiState.chatId
   const isSharePage = aiState.isSharePage
+  console.log("getUIStateFromAIState", aiState.messages)
   return aiState.messages
     .map((message, index) => {
       const { role, content, id, type, name } = message

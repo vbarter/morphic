@@ -11,6 +11,7 @@ import { Button } from './ui/button'
 import { ArrowRight, Plus } from 'lucide-react'
 import { EmptyScreen } from './empty-screen'
 import { nanoid } from 'ai'
+import {Textarea} from "@/components/ui/textarea";
 
 interface ChatPanelProps {
   messages: UIState
@@ -18,11 +19,10 @@ interface ChatPanelProps {
 
 export function ChatPanel({ messages }: ChatPanelProps) {
   const [input, setInput] = useState('')
-  const [_, setMessages] = useUIState<typeof AI>()
-  const [aiMessages, setAiMessages] = useAIState<typeof AI>()
+  const [, setMessages] = useUIState<typeof AI>()
   const { submit } = useActions()
   const [isButtonPressed, setIsButtonPressed] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const [showEmptyScreen, setShowEmptyScreen] = useState(true)
   const router = useRouter()
   // Focus on input when button is pressed
@@ -47,7 +47,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
       ...currentMessages,
       {
         id: nanoid(),
-        isGenerating: false,
+        // isGenerating: false,
         component: <UserMessage message={input} />
       }
     ])
@@ -60,9 +60,10 @@ export function ChatPanel({ messages }: ChatPanelProps) {
 
   // Clear messages
   const handleClear = () => {
-    setIsButtonPressed(true)
-    setMessages([])
+    // setIsButtonPressed(true)
+    // setMessages([])
     // setAiMessages([])
+    router.push('/')
   }
 
   useEffect(() => {
@@ -100,19 +101,34 @@ export function ChatPanel({ messages }: ChatPanelProps) {
       <div className='max-w-2xl w-full px-6'>
       <form onSubmit={handleSubmit} className="max-w-2xl w-full px-6">
         <div className="relative flex items-center w-full">
-          <Input
+          <Textarea
             ref={inputRef}
-            type="text"
             name="input"
+            rows={1}
+            tabIndex={0}
             placeholder="输入您的问题 ..."
+            spellCheck={false}
             value={input}
-            className="pl-4 pr-10 h-12 bg-muted"
+            className="resize-none w-full min-h-12 rounded-fill bg-muted border border-input pl-4 pr-10 pt-3 pb-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'"
             onChange={e => {
               setInput(e.target.value)
-              // setShowEmptyScreen(e.target.value.length === 0)
+              setShowEmptyScreen(e.target.value.length === 0)
             }}
-            // onFocus={() => setShowEmptyScreen(true)}
-            // onBlur={() => setShowEmptyScreen(false)}
+            onKeyDown={e => {
+              // Enter should submit the form
+              if (
+                  e.key === 'Enter' &&
+                  !e.shiftKey &&
+                  !e.nativeEvent.isComposing
+              ) {
+                // Prevent the default action to avoid adding a new line
+                e.preventDefault()
+                const textarea = e.target as HTMLTextAreaElement
+                textarea.form?.requestSubmit()
+              }
+            }}
+            onFocus={() => setShowEmptyScreen(true)}
+            onBlur={() => setShowEmptyScreen(false)}
           />
           <Button
             type="submit"
