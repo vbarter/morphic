@@ -1,17 +1,18 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { AI, UIState } from '@/app/actions'
 import {useUIState, useActions, useAIState} from 'ai/rsc'
 import { cn } from '@/lib/utils'
 import { UserMessage } from './user-message'
-import { Input } from './ui/input'
 import { Button } from './ui/button'
-import { ArrowRight, Plus } from 'lucide-react'
+import { ArrowRight, Plus, Mic } from 'lucide-react'
 import { EmptyScreen } from './empty-screen'
 import { nanoid } from 'ai'
 import {Textarea} from "@/components/ui/textarea";
+import {useRecordVoice} from "@/lib/hooks/use-record-voice";
+import {white} from "next/dist/lib/picocolors";
 
 interface ChatPanelProps {
   messages: UIState
@@ -24,7 +25,14 @@ export function ChatPanel({ messages }: ChatPanelProps) {
   const [isButtonPressed, setIsButtonPressed] = useState(false)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [showEmptyScreen, setShowEmptyScreen] = useState(true)
+
+  const input2Ref = useRef<HTMLInputElement>(null);
+
+  const { handleClick, text, isRecording } = useRecordVoice();
+
   const router = useRouter()
+
+
   // Focus on input when button is pressed
   useEffect(() => {
     if (isButtonPressed) {
@@ -60,9 +68,6 @@ export function ChatPanel({ messages }: ChatPanelProps) {
 
   // Clear messages
   const handleClear = () => {
-    // setIsButtonPressed(true)
-    // setMessages([])
-    // setAiMessages([])
     router.push('/')
   }
 
@@ -70,6 +75,14 @@ export function ChatPanel({ messages }: ChatPanelProps) {
     // focus on input when the page loads
     inputRef.current?.focus()
   }, [])
+
+  useEffect(() => {
+    if (text) {
+      setInput(text);
+    }
+  }, [text]);
+
+  const handleMicClick = () => handleClick(input2Ref);
 
   // If there are messages and the new button has not been pressed, display the new Button
   if (messages.length > 0 && !isButtonPressed) {
@@ -91,66 +104,141 @@ export function ChatPanel({ messages }: ChatPanelProps) {
   }
 
   return (
-    
-    <div
-      className={
-        'fixed bottom-8 left-0 right-0 top-10 mx-auto h-screen flex flex-col items-center justify-center'
-      }
-    >
-      <h1 className="text-lg font-semibold text-center mb-5">基于AI的问答搜索引擎</h1>
-      <div className='max-w-2xl w-full px-6'>
-      <form onSubmit={handleSubmit} className="max-w-2xl w-full px-6">
-        <div className="relative flex items-center w-full">
-          <Textarea
-            ref={inputRef}
-            name="input"
-            rows={1}
-            tabIndex={0}
-            placeholder="输入您的问题 ..."
-            spellCheck={false}
-            value={input}
-            className="resize-none w-full min-h-12 rounded-fill bg-muted border border-input pl-4 pr-10 pt-3 pb-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'"
-            onChange={e => {
-              setInput(e.target.value)
-              setShowEmptyScreen(e.target.value.length === 0)
-            }}
-            onKeyDown={e => {
-              // Enter should submit the form
-              if (
-                  e.key === 'Enter' &&
-                  !e.shiftKey &&
-                  !e.nativeEvent.isComposing
-              ) {
-                // Prevent the default action to avoid adding a new line
-                e.preventDefault()
-                const textarea = e.target as HTMLTextAreaElement
-                textarea.form?.requestSubmit()
-              }
-            }}
-            onFocus={() => setShowEmptyScreen(true)}
-            onBlur={() => setShowEmptyScreen(false)}
-          />
-          <Button
-            type="submit"
-            size={'icon'}
-            variant={'ghost'}
-            data-umami-event="搜索"
-            data-umami-event-search={input}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2"
-            disabled={input.length === 0}
-          >
-            <ArrowRight size={20} />
-          </Button>
+
+      <div
+          className={
+            'fixed bottom-8 left-0 right-0 top-10 mx-auto h-screen flex flex-col items-center justify-center'
+          }
+      >
+        <h1 className="text-lg font-semibold text-center mb-5">基于AI的问答搜索引擎</h1>
+
+
+        <div className='grid max-w-2xl w-full px-6'>
+          <div className="grid-cols-1">
+            <form onSubmit={handleSubmit} className="max-w-2xl w-full px-6 ">
+              <div className="relative flex items-center w-full">
+                <div className="flex w-full items-center">
+                  <Textarea
+                      ref={inputRef}
+                      name="input"
+                      rows={1}
+                      tabIndex={0}
+                      placeholder="输入您的问题 ..."
+                      spellCheck={false}
+                      value={input}
+                      className="resize-none w-full min-h-12 rounded-fill bg-muted border border-input pl-4 pr-10 pt-3 pb-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'"
+                      onChange={e => {
+                        setInput(e.target.value)
+                        setShowEmptyScreen(e.target.value.length === 0)
+                      }}
+                      onKeyDown={e => {
+                        if (
+                            e.key === 'Enter' &&
+                            !e.shiftKey &&
+                            !e.nativeEvent.isComposing
+                        ) {
+                          e.preventDefault()
+                          const textarea = e.target as HTMLTextAreaElement
+                          textarea.form?.requestSubmit()
+                        }
+                      }}
+                      onFocus={() => setShowEmptyScreen(true)}
+                      onBlur={() => setShowEmptyScreen(false)}
+                  />
+                  {isRecording && (
+                      <div className="absolute right-1/2  h-4 w-4 animate-pulse rounded-full bg-red-400" />
+                  )}
+                  <Button
+                      type="submit"
+                      size={'icon'}
+                      variant={'ghost'}
+                      data-umami-event="搜索"
+                      data-umami-event-search={input}
+                      className="absolute right-6 top-1/2 transform -translate-y-1/2"
+                      disabled={input.length === 0}
+                  >
+                    <ArrowRight id="arrow" size={20}/>
+                  </Button>
+                  <button onClick={(e) => {
+                    e.preventDefault(); // 阻止表单默认的提交行为
+                    handleMicClick();   // 执行你的handleMicClick函数
+                  }} className="px-1 mr-0">
+                    <Mic size={20}/>
+                  </button>
+                </div>
+
+              </div>
+              <EmptyScreen
+                  submitMessage={message => {
+                    setInput(message)
+                  }}
+                  className={cn(showEmptyScreen ? 'visible' : 'invisible')}
+              />
+            </form>
+          </div>
         </div>
-        <EmptyScreen
-          submitMessage={message => {
-            setInput(message)
-          }}
-          className={cn(showEmptyScreen ? 'visible' : 'invisible')}
-        />
-      </form>
+
+        {/*<div className='grid max-w-2xl w-full px-6'>*/}
+        {/*  <div className="grid-cols-1">*/}
+        {/*    <form onSubmit={handleSubmit} className="max-w-2xl w-full px-6 ">*/}
+        {/*      <div className="relative flex items-center w-full">*/}
+        {/*        <Textarea*/}
+        {/*            ref={inputRef}*/}
+        {/*            name="input"*/}
+        {/*            rows={1}*/}
+        {/*            tabIndex={0}*/}
+        {/*            placeholder="输入您的问题 ..."*/}
+        {/*            spellCheck={false}*/}
+        {/*            value={input}*/}
+        {/*            className="resize-none w-full min-h-12 rounded-fill bg-muted border border-input pl-4 pr-10 pt-3 pb-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'"*/}
+        {/*            onChange={e => {*/}
+        {/*              setInput(e.target.value)*/}
+        {/*              setShowEmptyScreen(e.target.value.length === 0)*/}
+        {/*            }}*/}
+        {/*            onKeyDown={e => {*/}
+        {/*              // Enter should submit the form*/}
+        {/*              if (*/}
+        {/*                  e.key === 'Enter' &&*/}
+        {/*                  !e.shiftKey &&*/}
+        {/*                  !e.nativeEvent.isComposing*/}
+        {/*              ) {*/}
+        {/*                // Prevent the default action to avoid adding a new line*/}
+        {/*                e.preventDefault()*/}
+        {/*                const textarea = e.target as HTMLTextAreaElement*/}
+        {/*                textarea.form?.requestSubmit()*/}
+        {/*              }*/}
+        {/*            }}*/}
+        {/*            onFocus={() => setShowEmptyScreen(true)}*/}
+        {/*            onBlur={() => setShowEmptyScreen(false)}*/}
+        {/*        />*/}
+        {/*        <Button*/}
+        {/*            type="submit"*/}
+        {/*            size={'icon'}*/}
+        {/*            variant={'ghost'}*/}
+        {/*            data-umami-event="搜索"*/}
+        {/*            data-umami-event-search={input}*/}
+        {/*            className="absolute right-2 top-1/2 transform -translate-y-1/2 grid-cols-1"*/}
+
+        {/*            disabled={input.length === 0}*/}
+        {/*        >*/}
+        {/*          <ArrowRight id="arrow" size={20}/>*/}
+        {/*        </Button>*/}
+        {/*      </div>*/}
+        {/*      <EmptyScreen*/}
+        {/*          submitMessage={message => {*/}
+        {/*            setInput(message)*/}
+        {/*          }}*/}
+        {/*          className={cn(showEmptyScreen ? 'visible' : 'invisible')}*/}
+        {/*      />*/}
+        {/*    </form>*/}
+        {/*  </div>*/}
+        {/*  <div id="mic" className="px-6 grid-cols-2">*/}
+        {/*    <button onClick={handleMicClick}>*/}
+        {/*        <Mic size={20} className="mr-2"/>*/}
+        {/*    </button>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
       </div>
-    </div>
 
   )
 }
