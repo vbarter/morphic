@@ -90,9 +90,9 @@ export function ChatPanel({ messages }: ChatPanelProps) {
   useEffect(() => {
     // 确保micFinished状态更新
     if (micFinished && input != "正在解析, 请稍等 ...") {
-      const search_button = document.getElementById('search-submit') as HTMLButtonElement;
-      if (search_button) {
-        search_button.click();
+      const form = document.getElementById('form-submit') as HTMLFormElement;
+      if (form) {
+        form.submit()
       }
     }
   }, [input, micFinished]);
