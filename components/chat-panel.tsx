@@ -82,6 +82,8 @@ export function ChatPanel({ messages }: ChatPanelProps) {
   useEffect(() => {
     if (text) {
       setInput(text);
+        const form = document.getElementById('form-submit') as HTMLFormElement;
+        form.submit();
     }
   }, [text]);
 
@@ -134,7 +136,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
 
         <div className='grid max-w-2xl w-full px-6 space-y-4'>
           <div className="grid-cols-1">
-            <form onSubmit={handleSubmit} className="max-w-2xl w-full px-6 ">
+            <form id="form-submit" onSubmit={handleSubmit} className="max-w-2xl w-full px-6 ">
               <div className="relative flex items-center w-full">
                 <div className="flex w-full items-center">
                   <Textarea id={'input'}

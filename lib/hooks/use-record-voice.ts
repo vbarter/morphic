@@ -40,10 +40,10 @@ export const useRecordVoice = () => {
       const { text } = response;
       console.log("text", text)
       setText(text);
-      const search_button = document.getElementById('search-submit') as HTMLButtonElement;
-      const search_input = document.getElementById('input') as HTMLTextAreaElement;
-      search_input.value = text;
-      search_button.click()
+      // const search_button = document.getElementById('search-submit') as HTMLButtonElement;
+      // const search_input = document.getElementById('input') as HTMLTextAreaElement;
+      // const form_submit = document.getElementById('form-submit') as HTMLFormElement
+      // form_submit.submit()
     } catch (error) {
       console.log(error);
     }
