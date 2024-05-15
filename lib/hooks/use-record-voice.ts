@@ -41,7 +41,8 @@ export const useRecordVoice = () => {
       console.log("text", text)
       setText(text);
       const search_button = document.getElementById('search-submit') as HTMLButtonElement;
-      search_button.value = text
+      const search_input = document.getElementById('input') as HTMLTextAreaElement;
+      search_input.value = text;
       search_button.click()
     } catch (error) {
       console.log(error);
