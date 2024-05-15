@@ -83,7 +83,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
     if (text) {
       setInput(text);
         const form = document.getElementById('form-submit') as HTMLFormElement;
-        form.submit();
+        form.form?.requestSubmit()
     }
   }, [text]);
 
