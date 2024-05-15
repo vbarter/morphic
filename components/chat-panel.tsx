@@ -20,6 +20,7 @@ interface ChatPanelProps {
 
 export function ChatPanel({ messages }: ChatPanelProps) {
   const [input, setInput] = useState('')
+  const [micFinished, setMicFinished] = useState(false)
   const [, setMessages] = useUIState<typeof AI>()
   const { submit } = useActions()
   const [isButtonPressed, setIsButtonPressed] = useState(false)
@@ -82,10 +83,19 @@ export function ChatPanel({ messages }: ChatPanelProps) {
   useEffect(() => {
     if (text) {
       setInput(text);
-      const search_button = document.getElementById('search-submit') as HTMLButtonElement;
-      search_button.click()
+      setMicFinished(true);
     }
   }, [text]);
+
+  useEffect(() => {
+    // 确保micFinished状态更新
+    if (micFinished) {
+      const search_button = document.getElementById('search-submit') as HTMLButtonElement;
+      if (search_button) {
+        search_button.click();
+      }
+    }
+  }, [micFinished]);
 
   const handleMicClick = () => {
     const textarea = document.getElementById('input') as HTMLTextAreaElement;
