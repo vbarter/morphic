@@ -89,9 +89,9 @@ export function ChatPanel({ messages }: ChatPanelProps) {
     const textarea = document.getElementById('input') as HTMLTextAreaElement;
 
     if (isMicActive) {
-      textarea.disabled = false
-      setInput("输入您的问题 ...")
-
+      // textarea.disabled = false
+      // setInput("输入您的问题 ...")
+      setInput("正在解析, 请稍等 ...")
       console.log("mic is active")
       setMicIsActive(false);
     } else {
