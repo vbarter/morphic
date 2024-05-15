@@ -87,15 +87,15 @@ export function ChatPanel({ messages }: ChatPanelProps) {
     }
   }, [text]);
 
-  useEffect(() => {
-    // 确保micFinished状态更新
-    if (micFinished && input != "正在解析, 请稍等 ...") {
-      const form = document.getElementById('form-submit') as HTMLFormElement;
-      if (form) {
-        form.submit()
-      }
-    }
-  }, [input, micFinished]);
+  // useEffect(() => {
+  //   // 确保micFinished状态更新
+  //   if (micFinished && input != "正在解析, 请稍等 ...") {
+  //     const form = document.getElementById('form-submit') as HTMLFormElement;
+  //     if (form) {
+  //       form.submit()
+  //     }
+  //   }
+  // }, [input, micFinished]);
 
   const handleMicClick = () => {
     const textarea = document.getElementById('input') as HTMLTextAreaElement;
@@ -161,6 +161,11 @@ export function ChatPanel({ messages }: ChatPanelProps) {
                       onChange={e => {
                         setInput(e.target.value)
                         setShowEmptyScreen(e.target.value.length === 0)
+                        if (isMicActive && input != "正在解析, 请稍等 ..." && input != "正在语音输入 ...") {
+                          e.preventDefault()
+                          const textarea = e.target as HTMLTextAreaElement
+                          textarea.form?.requestSubmit()
+                        }
                       }}
                       onKeyDown={e => {
                         if (
