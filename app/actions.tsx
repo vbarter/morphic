@@ -40,6 +40,9 @@ async function submit(formData?: FormData, skip?: boolean) {
       message.type !== 'end'
   )
 
+  console.log("messages", messages)
+
+
   // goupeiId is used to group the messages for collapse
   const groupeId = nanoid()
 
@@ -51,6 +54,8 @@ async function submit(formData?: FormData, skip?: boolean) {
   const userInput = skip
     ? `{"action": "skip"}`
     : (formData?.get('input') as string)
+
+  console.log("userInput", userInput)
 
   const content = skip
     ? userInput
@@ -64,6 +69,8 @@ async function submit(formData?: FormData, skip?: boolean) {
     : formData?.has('related_query')
     ? 'input_related'
     : 'inquiry'
+  console.log("content", content)
+  console.log("type", type)
 
   // Add the user message to the state
   if (content) {
@@ -274,8 +281,8 @@ export const AI = createAI<AIState, UIState>({
   initialAIState,
   onGetUIState: async () => {
     'use server'
-
     const aiState = getAIState()
+    console.log(aiState)
     if (aiState) {
       const uiState = getUIStateFromAIState(aiState)
       return uiState
@@ -326,6 +333,7 @@ export const AI = createAI<AIState, UIState>({
 export const getUIStateFromAIState = (aiState: Chat) => {
   const chatId = aiState.chatId
   const isSharePage = aiState.isSharePage
+  console.log("getUIStateFromAIState", aiState.messages)
   return aiState.messages
     .map((message, index) => {
       const { role, content, id, type, name } = message

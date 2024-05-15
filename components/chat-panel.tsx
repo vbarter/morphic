@@ -47,7 +47,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
+    console.log("被调用")
     // Clear messages if button is pressed
     if (isButtonPressed) {
       handleClear()
@@ -66,6 +66,10 @@ export function ChatPanel({ messages }: ChatPanelProps) {
 
     // Submit and get response message
     const formData = new FormData(e.currentTarget)
+    if (formData.get('input') === null) {
+      formData.set("input", input)
+    }
+    console.log("--->", formData.get('input'))
     const responseMessage = await submit(formData)
     setMessages(currentMessages => [...currentMessages, responseMessage as any])
   }
@@ -87,15 +91,17 @@ export function ChatPanel({ messages }: ChatPanelProps) {
     }
   }, [text]);
 
-  // useEffect(() => {
-  //   // 确保micFinished状态更新
-  //   if (micFinished && input != "正在解析, 请稍等 ...") {
-  //     const form = document.getElementById('form-submit') as HTMLFormElement;
-  //     if (form) {
-  //       form.submit()
-  //     }
-  //   }
-  // }, [input, micFinished]);
+  useEffect(() => {
+    // 确保micFinished状态更新
+    if (micFinished && input != "正在解析, 请稍等 ...") {
+      const form = document.getElementById('form-submit') as HTMLFormElement;
+      // 使用 requestSubmit 方法来触发表单提交。
+      // 如果你的 handleSubmit 函数挂载在了 onSubmit 事件上，这方法将会触发它。
+      if (form) {
+        form.requestSubmit();
+      }
+    }
+  }, [input, micFinished]);
 
   const handleMicClick = () => {
     const textarea = document.getElementById('input') as HTMLTextAreaElement;
@@ -161,11 +167,6 @@ export function ChatPanel({ messages }: ChatPanelProps) {
                       onChange={e => {
                         setInput(e.target.value)
                         setShowEmptyScreen(e.target.value.length === 0)
-                        if (isMicActive && input != "正在解析, 请稍等 ..." && input != "正在语音输入 ...") {
-                          e.preventDefault()
-                          const textarea = e.target as HTMLTextAreaElement
-                          textarea.form?.requestSubmit()
-                        }
                       }}
                       onKeyDown={e => {
                         if (
