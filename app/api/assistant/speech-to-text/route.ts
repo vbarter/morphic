@@ -16,8 +16,7 @@ export async function POST(req: NextRequest) {
       file,
       model: "whisper-1",
       language: "zh",
-      temperature: 0.1,
-      response_format: "text",
+      temperature: 0.3,
     });
 
     return NextResponse.json(data);
