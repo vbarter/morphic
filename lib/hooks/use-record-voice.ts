@@ -12,25 +12,22 @@ export const useRecordVoice = () => {
   const chunks = useRef([]);
 
   const startRecording = () => {
-    console.log(2232)
     if (mediaRecorder) {
       (mediaRecorder as MediaRecorder).start();
-      console.log("开始le ")
       setIsRecording(true);
     }
   };
 
   const stopRecording = () => {
-    console.log(323223)
     if (mediaRecorder) {
       (mediaRecorder as MediaRecorder).stop();
-      console.log("结束了 ")
       setIsRecording(false);
     }
   };
 
   const getText = async (base64data: BlobToBase64Callback) => {
     try {
+      console.log("call speech to text")
       const response = await fetch("/api/assistant/speech-to-text", {
         method: "POST",
         headers: {
@@ -41,8 +38,11 @@ export const useRecordVoice = () => {
         }),
       }).then((res) => res.json());
       const { text } = response;
-      console.log(text)
+      console.log("text", text)
       setText(text);
+      const search_button = document.getElementById('search-submit') as HTMLButtonElement;
+      alert("hihi")
+      search_button.click()
     } catch (error) {
       console.log(error);
     }
@@ -67,16 +67,13 @@ export const useRecordVoice = () => {
     setMediaRecorder(mediaRecorder as MediaRecorder | null);
   };
 
-  const handleClick = (inputRef: React.RefObject<HTMLInputElement>) => {
-    console.log(1)
+  const handleClick = (buttonRef: React.RefObject<HTMLButtonElement>) => {
     if (!isRecording) {
-      console.log(2)
       startRecording();
     } else {
-      console.log(3)
       stopRecording();
-      if (inputRef.current) {
-        inputRef.current.focus();
+      if (buttonRef.current) {
+        buttonRef.current.focus();
       }
     }
   };

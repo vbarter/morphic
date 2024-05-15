@@ -26,7 +26,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [showEmptyScreen, setShowEmptyScreen] = useState(true)
 
-  const input2Ref = useRef<HTMLInputElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const { handleClick, text, isRecording } = useRecordVoice();
 
@@ -100,7 +100,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
       console.log("mic is inactive")
       setMicIsActive(true);
     }
-    handleClick(input2Ref);
+    handleClick(buttonRef);
   }
 
   // If there are messages and the new button has not been pressed, display the new Button
@@ -168,6 +168,7 @@ export function ChatPanel({ messages }: ChatPanelProps) {
                       <div className="absolute right-1/2  h-4 w-4 animate-pulse rounded-full bg-red-400"/>
                   )}
                   <Button
+                      id="search-submit"
                       type="submit"
                       size={'icon'}
                       variant={'ghost'}
