@@ -89,13 +89,13 @@ export function ChatPanel({ messages }: ChatPanelProps) {
 
   useEffect(() => {
     // 确保micFinished状态更新
-    if (micFinished) {
+    if (input != "正在解析, 请稍等 ...") {
       const search_button = document.getElementById('search-submit') as HTMLButtonElement;
       if (search_button) {
         search_button.click();
       }
     }
-  }, [micFinished]);
+  }, [input]);
 
   const handleMicClick = () => {
     const textarea = document.getElementById('input') as HTMLTextAreaElement;
