@@ -82,8 +82,8 @@ export function ChatPanel({ messages }: ChatPanelProps) {
   useEffect(() => {
     if (text) {
       setInput(text);
-        const form = document.getElementById('form-submit') as HTMLFormElement;
-        form.form?.requestSubmit()
+      const search_button = document.getElementById('search-submit') as HTMLButtonElement;
+      search_button.click()
     }
   }, [text]);
 
