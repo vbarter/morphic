@@ -40,19 +40,38 @@ export const useRecordVoice = () => {
       const { text } = response;
       console.log("text", text)
       setText(text);
-      // const search_button = document.getElementById('search-submit') as HTMLButtonElement;
-      // const search_input = document.getElementById('input') as HTMLTextAreaElement;
-      // const form_submit = document.getElementById('form-submit') as HTMLFormElement
-      // form_submit.submit()
     } catch (error) {
       console.log(error);
     }
   };
 
   const initialMediaRecorder = (stream: MediaStream) => {
-    const mediaRecorder: MediaRecorder = new MediaRecorder(stream);
+    const mimeTypes = ["audio/webm", "video/mp4", "audio/wav"];
+    let mediaRecorder: MediaRecorder = null as unknown as MediaRecorder;
+    let choosenMimeType: string = "";
+    for (let mimeType of mimeTypes) {
+      try {
+        if (MediaRecorder.isTypeSupported(mimeType)) {
+          choosenMimeType = mimeType;
+          const options = { mimeType };
+          mediaRecorder = new MediaRecorder(stream, options);
+          // 进行录制等操作
+          break
+        }
+      } catch (error) {
+        console.error(`Error creating MediaRecorder with mimeType: ${mimeType}`, error);
+      }
+    }
+
+    if (!mediaRecorder) {
+      console.error("No suitable mimeType found for this device");
+      return;
+    }
+
+    // const mediaRecorder: MediaRecorder = new MediaRecorder(stream);
 
     mediaRecorder.onstart = () => {
+      console.log("mediaRecorder.onstart")
       chunks.current = [];
     };
 
@@ -60,8 +79,10 @@ export const useRecordVoice = () => {
       chunks.current.push(ev.data as never);
     };
 
+    console.log("44")
     mediaRecorder.onstop = () => {
-      const audioBlob: Blob = new Blob(chunks.current, { type: "audio/wav" });
+      const audioBlob: Blob = new Blob(chunks.current, { type: choosenMimeType });
+      console.log("55")
       blobToBase64(audioBlob, getText as unknown as BlobToBase64Callback); // Change the type of getText to unknown first
     };
 
@@ -70,8 +91,10 @@ export const useRecordVoice = () => {
 
   const handleClick = (buttonRef: React.RefObject<HTMLButtonElement>) => {
     if (!isRecording) {
+      console.log("11")
       startRecording();
     } else {
+      console.log("22")
       stopRecording();
       if (buttonRef.current) {
         buttonRef.current.focus();
@@ -81,6 +104,7 @@ export const useRecordVoice = () => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      chunks.current = [];
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then(initialMediaRecorder);

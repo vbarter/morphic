@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { toFile } from "openai/uploads";
 import { Readable } from "stream";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "", baseURL: process.env.OPENAI_API_BASE });
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
