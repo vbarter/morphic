@@ -28,14 +28,16 @@ export function SearchResults({ results }: SearchResultsProps) {
           <Link href={result.url} passHref target="_blank">
             <Card className="flex-1">
               <CardContent className="p-2">
-                <p className="text-xs line-clamp-2">{result.content}</p>
+                <p className="text-xs line-clamp-2">
+                  {result.title || result.content}
+                </p>
                 <div className="mt-2 flex items-center space-x-2">
                   <Avatar className="h-4 w-4">
                     <AvatarImage
-                      src={`https://www.google.com/s2/favicons?domain=${
-                        new URL(result.url).hostname
-                      }`}
-                      alt={result.author}
+                        src={`https://www.google.com/s2/favicons?domain=${
+                            new URL(result.url).hostname
+                        }`}
+                        alt={result.author}
                     />
                     <AvatarFallback>
                       {new URL(result.url).hostname[0]}

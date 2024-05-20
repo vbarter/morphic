@@ -26,24 +26,35 @@ export function ChatShare({ chatId, className }: ChatShareProps) {
     const [open, setOpen] = useState(false)
     const [pending, startTransition] = useTransition()
     const { copyToClipboard } = useCopyToClipboard({ timeout: 1000 })
+    const [shareUrl, setShareUrl] = useState('')
 
-    const handleClick = async () => {
-        startTransition(async () => {
-            const result = await shareChat(chatId)
-            if (!result) {
-                toast.error('Failed to share chat')
-            }
-
-            if (!result?.sharePath) {
-                toast.error('Could not copy link to clipboard')
-                return
-            }
-
-            const url = new URL(result.sharePath, window.location.origin)
-            copyToClipboard(url.toString())
-            toast.success('已复制')
-            setOpen(false)
+    const handleShare = async () => {
+        startTransition(() => {
+            setOpen(true)
         })
+        const result = await shareChat(chatId)
+        if (!result) {
+            toast.error('Failed to share chat')
+            return
+        }
+
+        if (!result.sharePath) {
+            toast.error('Could not copy link to clipboard')
+            return
+        }
+
+        const url = new URL(result.sharePath, window.location.href)
+        setShareUrl(url.toString())
+    }
+
+    const handleCopy = () => {
+        if (shareUrl) {
+            copyToClipboard(shareUrl)
+            toast.success('Link copied to clipboard')
+            setOpen(false)
+        } else {
+            toast.error('No link to copy')
+        }
     }
 
     return (
@@ -72,9 +83,16 @@ export function ChatShare({ chatId, className }: ChatShareProps) {
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="items-center">
-                        <Button onClick={handleClick} disabled={pending} size="sm">
-                            {pending ? <Spinner /> : '复制链接地址'}
-                        </Button>
+                        {!shareUrl && (
+                            <Button onClick={handleShare} disabled={pending} size="sm">
+                                {pending ? <Spinner /> : '获取链接地址'}
+                            </Button>
+                        )}
+                        {shareUrl && (
+                            <Button onClick={handleCopy} disabled={pending} size="sm">
+                                {'复制链接地址'}
+                            </Button>
+                        )}
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

@@ -21,6 +21,7 @@ import { SearchSection } from '@/components/search-section'
 import SearchRelated from '@/components/search-related'
 import { CopilotDisplay } from '@/components/copilot-display'
 import React from "react";
+import RetrieveSection from "@/components/retrieve-section";
 
 async function submit(formData?: FormData, skip?: boolean) {
   'use server'
@@ -177,7 +178,8 @@ async function submit(formData?: FormData, skip?: boolean) {
             }
           : msg
       ) as CoreMessage[]
-      answer = await writer(uiStream, streamText, modifiedMessages)
+      const latestMessages = modifiedMessages.slice(maxMessages * -1)
+      answer = await writer(uiStream, streamText, latestMessages)
     } else {
       streamText.done()
     }
@@ -424,6 +426,12 @@ export const getUIStateFromAIState = (aiState: Chat) => {
                 return {
                   id,
                   component: <SearchSection result={searchResults.value} />,
+                  isCollapsed: isCollapsed.value
+                }
+              case "retrieve":
+                return {
+                  id,
+                  component: <RetrieveSection data={toolOutput} />,
                   isCollapsed: isCollapsed.value
                 }
             }
